@@ -7,35 +7,34 @@ from __future__ import division
 
 from math import sqrt
 
-
-class Vector3(object):
+class Vec3(object):
     def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
         
     def __add__(self, other):
-        if type(other) is Vector3:
-            return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
+        if type(other) is Vec3:
+            return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
         else:
-            raise Exception("invalid operand for Vector3 addition: " + repr(type(other)))
+            raise Exception("invalid operand for Vec3 addition: " + repr(type(other)))
     
     def __sub__(self, other):
-        return Vector3(self.x - other.x, self.y - other.y, self.z - other.z)
+        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
     
     def __mul__(self, other):
         if type(other) is float or type(other) is int:
-            return Vector3(self.x * other, self.y * other, self.z * other)
-        elif type(other) is Vector3:
-            # cross multiplication by default. use dot() for dot product
-            return Vector3(self.y * other.z - self.z * other.y,
-                          self.z * other.x - self.x * other.z,
-                          self.x * other.y - self.y * other.x)
+            return Vec3(self.x * other, self.y * other, self.z * other)
+        elif type(other) is Vec3:
+            # component multiplication by default. use dot() or cross() for others
+            return Vec3(self.x * other.x,
+                           self.y * other.y,
+                           self.z * other.z)
         else:
-            raise Exception("invalid operand for Vector3 multiplication: " + repr(type(other)))
+            raise Exception("invalid operand for Vec3 multiplication: " + repr(type(other)))
             
     def __truediv__(self, other):
-        return Vector3(self.x / other, self.y / other, self.z / other)
+        return Vec3(self.x / other, self.y / other, self.z / other)
        
     def __neg__(self):
         return self * -1
@@ -43,8 +42,16 @@ class Vector3(object):
     def dot(self, other):
         return self.x * other.x + self.y * other.y + self.z * other.z
     
+    def cross(self, other):
+        return Vec3(self.y * other.z - self.z * other.y,
+                       self.z * other.x - self.x * other.z,
+                       self.x * other.y - self.y * other.x)
+    
+    def reflect(self, n):
+        return self - n * self.dot(n) * 2
+    
     def length(self):
-        return sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+        return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
     
     def normalized(self):
         return self / self.length()
@@ -55,7 +62,7 @@ class Vector3(object):
         self.z = min(ma, max(mi, self.z))
     
     def __repr__(self):
-        return 'Vector3(%f, %f, %f)' % (self.x, self.y, self.z)
+        return 'Vec3(%f, %f, %f)' % (self.x, self.y, self.z)
              
         
 class Ray(object):

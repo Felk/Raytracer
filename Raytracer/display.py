@@ -21,8 +21,8 @@ class Camera(object):
         self.up = up
         
         self.f = (self.center - self.eye).normalized()
-        self.s = (self.f * self.up).normalized()
-        self.u = self.s * self.f
+        self.s = (self.f.cross(self.up)).normalized()
+        self.u = self.s.cross(self.f)
 
 class View(object):
     def __init__(self, res, camera):
@@ -43,6 +43,7 @@ class View(object):
     
     def putpixel(self, (x, y), color):
         c = int(255 * color.x) | (int(255 * color.y) << 8) | (int(255 * color.z) << 16)
+        #self.image[x, y] = c
         self.image.putpixel((x, self.res.height - 1 - y), c)
         
     def save(self, f):

@@ -5,6 +5,13 @@ Created on 04.05.2015
 '''
 from math import sqrt
 
+
+class Light(object):
+    def __init__(self, color, pos):
+        self.color = color
+        self.pos = pos
+
+
 class Sphere(object):
     def __init__(self, mat, center, radius):
         self.mat = mat
@@ -36,10 +43,11 @@ class Plane(object):
         a = op.dot(self.n)
         b = ray.direction.dot(self.n)
         
-        if b and -a/b > 0:
-            return -a/b
-        else:
-            return None
+        if b:
+            param = -a/b
+            if param > 0:
+                return param
+        return None
         
     def normalAt(self, p):
         return self.n
@@ -54,16 +62,17 @@ class Triangle(object):
         
         self.u = self.b - self.a
         self.v = self.c - self.a
+        self.n = (self.v.cross(self.u)).normalized()
         
     def intersectionParameter(self, ray):
         w = ray.origin - self.a
-        dv = ray.direction * self.v
+        dv = ray.direction.cross(self.v)
         dvu = dv.dot(self.u)
         
         if dvu == 0.0:
             return None
         
-        wu = w * self.u
+        wu = w.cross(self.u)
         r = dv.dot(w) / dvu
         s = wu.dot(ray.direction) / dvu
         
@@ -73,6 +82,6 @@ class Triangle(object):
         return None
         
     def normalAt(self, p):
-        return (self.v * self.u).normalized()
+        return self.n
     
         
