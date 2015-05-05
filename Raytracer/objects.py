@@ -16,10 +16,10 @@ class Sphere(object):
         v = co.dot(ray.direction)
         discr = v**2 - co.dot(co) + self.radius**2
         
-        if discr < 0:
-            return None
-        else:
-            return v - sqrt(discr)
+        if discr >= 0:
+            param = v - sqrt(discr)
+            if param > 0: return param
+        return None
 
     def normalAt(self, p):
         return (p - self.center).normalized()
@@ -68,11 +68,11 @@ class Triangle(object):
         s = wu.dot(ray.direction) / dvu
         
         if 0<=r and r<=1 and 0<=s and s<=1 and r+s<=1:
-            return wu.dot(self.v) / dvu
-        else:
-            return None
+            param = wu.dot(self.v) / dvu
+            if param > 0: return param;
+        return None
         
     def normalAt(self, p):
-        return (self.u * self.v).normalized()
+        return (self.v * self.u).normalized()
     
         

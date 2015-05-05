@@ -47,4 +47,7 @@ class View(object):
         
     def save(self, f):
         self.image.save(f)
+    
+    def show(self):
+        self.image.show()
         

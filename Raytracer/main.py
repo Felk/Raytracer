@@ -16,11 +16,11 @@ from material import Material
 
 res = Resolution(400, 400)
 BG_COLOR = Vector3(0, 0, 0)
-AMBIENT_COLOR = Vector3(0.4, 0.4, 0.4)
-LIGHT = Vector3(30, 30, 10)
+AMBIENT_COLOR = Vector3(1, 1, 1)
+LIGHT = Vector3(10, 10, 10)
 
 fov    = 45
-eye    = Vector3(0, 1.8, 10)
+eye    = Vector3(0, 2, 10)
 center = Vector3(0, 3, 0)
 up     = Vector3(0, 1, 0)
 
@@ -51,7 +51,7 @@ for x in range(res.width):
                     intersect = ray.pointAt(param)
                     l = (LIGHT - intersect).normalized()
                     lightRay = Ray(intersect, l)
-                    color = AMBIENT_COLOR * o.mat.ka # ambient light
+                    color = Vector3(AMBIENT_COLOR.x * o.mat.color.x, AMBIENT_COLOR.y * o.mat.color.y, AMBIENT_COLOR.z * o.mat.color.z) * o.mat.ka # ambient light
                     shadow = False
                     for o2 in objects:
                         if o2 == o: continue
@@ -65,7 +65,7 @@ for x in range(res.width):
                         lr = d - n * d.dot(n) * 2
                         # calc color with Phong
                         color += o.mat.color * o.mat.kd * n.dot(l) # diffuse light
-                        color += o.mat.color * o.mat.ks * lr.dot(-d) #specular light 
+                        color += o.mat.color * o.mat.ks * lr.dot(-d)**16 #specular light 
                     
                     color.clamp(0, 1) # TODO is this really necessary or is there a bug?
                  
@@ -73,5 +73,5 @@ for x in range(res.width):
         
     print x, '/', res.width
                                 
-view.save('a.png')
+view.show()
 
