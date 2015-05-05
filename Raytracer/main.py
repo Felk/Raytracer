@@ -16,7 +16,7 @@ from world import World
 
 
 BG_COLOR = Vec3(0, 0, 0)
-MAX_DEPTH = 5  #  for raytracing
+MAX_DEPTH = 10  #  for raytracing
 
 LIGHT_AMBIENT = Vec3(1, 1, 1)
 LIGHT_POINT = Light(Vec3(1, 1, 1), Vec3(20, 30, 10))
@@ -27,15 +27,15 @@ center = Vec3(0, 3, 0)
 up = Vec3(0, 1, 0)
 camera = Camera(fov / 360 * pi, eye, center, up)
 
-res = Resolution(800, 800)
+res = Resolution(400, 400)
 view = View(res, camera)
 
 world = World()
 world.add(Sphere(Material(Vec3(1, 0, 0)), Vec3(1.41, 3, -14), 1))
 world.add(Sphere(Material(Vec3(0, 1, 0)), Vec3(-1.41, 3, -14), 1))
 world.add(Sphere(Material(Vec3(0, 0, 1)), Vec3(0, 5, -14), 1))
-world.add(Plane(Material(Vec3(0.6, 0.6, 0.6)), Vec3(0, 0, 0), Vec3(0, 1, 0)))
-world.add(Triangle(Material(Vec3(1, 1, 0)), Vec3(0, 5, -16), Vec3(2, 3, -16), Vec3(-2, 3, -16)))
+world.add(Plane(Material(Vec3(0.6, 0.6, 0.6), reflect=0), Vec3(0, 0, 0), Vec3(0, 1, 0)))
+world.add(Triangle(Material(Vec3(1, 1, 0), reflect=0), Vec3(0, 5, -16), Vec3(2, 3, -16), Vec3(-2, 3, -16)))
 
 def trace(ray, level=0):
     if level <= MAX_DEPTH:
