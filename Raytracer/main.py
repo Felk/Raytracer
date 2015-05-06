@@ -16,14 +16,19 @@ from world import World
 import time
 
 AA = 2
-FILE = 'a.png'
+FILE = 'out.png'
 
 BG_COLOR = Vec3(0.6, 0.6, 1)
 MAX_DEPTH = 5  #  for raytracing
 
 LIGHT_AMBIENT = Vec3(1, 1, 1)
-lights = [Light(Vec3(0.7, 0.7, 0.7), Vec3(16, 30, 10)),
+lights = [Light(Vec3(0.9, 0.9, 0.9), Vec3(16, 30, 10)),
           #Light(Vec3(0.3, 0.3, 0.9), Vec3(-20, 30, 10)),
+          # Und das? Wozu ist das?
+          # Das ist blaues Licht.
+          # Und was macht es?
+          # Es leuchtet blau.
+          # Verstehe...
           ]
 
 
@@ -33,7 +38,7 @@ center = Vec3(0, 3, 0)
 up = Vec3(0, 1, 0)
 camera = Camera(fov / 360 * pi, eye, center, up)
 
-res = Resolution(400, 400)
+res = Resolution(480, 270)
 view = View(res, camera)
 
 world = World()
@@ -43,8 +48,9 @@ world.add(Sphere(Material(Vec3(0, 0, 1)), Vec3(0, 5, -14), 1))
 world.add(Plane(MaterialCheckerboard(Vec3(0.9, 0.9, 0.9), Vec3(0.1, 0.1, 0.1)), Vec3(0, 0, 0), Vec3(0, 1, 0)))
 world.add(Triangle(Material(Vec3(1, 1, 0), reflect=0), Vec3(0, 5, -16), Vec3(2, 3, -16), Vec3(-2, 3, -16)))
 
-world.add(Triangle(Material(Vec3(0.6, 0.9, 0.6), reflect=0, transparency=0.4), Vec3(-4, 0, -13), Vec3(0, 0, -20), Vec3(-4, 8, -13)))
-world.add(Triangle(Material(Vec3(0.6, 0.9, 0.6), reflect=0.6), Vec3(0, 0, -20), Vec3(4, 0, -13), Vec3(4, 8, -13)))
+# TODO fixen! Brechung funktioniert nicht und macht bei einer Glasscheibe auch wenig Sinn
+# world.add(Triangle(Material(Vec3(0.6, 1, 0.6), reflect=0, transparency=0.7, refract=0), Vec3(-6, 0, -11), Vec3(-1, 0, -18), Vec3(-6, 8, -11)))
+world.add(Triangle(Material(Vec3(0.6, 1, 0.6), reflect=0.7), Vec3(1, 0, -18), Vec3(6, 0, -11), Vec3(6, 8, -11)))
 
 def trace(ray, level=0):
     if level <= MAX_DEPTH:
@@ -68,7 +74,7 @@ def shade(hit, level):
         # Lichtabgewandte Seite oder im Schatten?
         inShadow = vecToLight.dot(n) < 0 or world.getIntersection(rayToLight, this)
         
-        if not inShadow:  # Diffuses und spekulares Licht
+        if not inShadow:
             light += L.color * this.mat.kd * n.dot(vecToLight)  # diffus
             light += L.color * this.mat.ks * vecToLightR.dot(-vecToHit) ** this.mat.n  # spekular
     
@@ -79,9 +85,7 @@ def shade(hit, level):
     if this.mat.transparency > 0:
         rayRefracted = vecToHit.refract(n, this.mat.refract)
         if rayRefracted:
-            tc = trace(Ray(hit.pos, rayRefracted), level + 1) * this.mat.transparency
-            #print tc
-            color += tc
+            color += trace(Ray(hit.pos, rayRefracted), level + 1) * this.mat.transparency
     return color
 
 def main():
@@ -93,12 +97,12 @@ def main():
                 color += trace(ray) * (1 / (AA*AA))
             color.clamp(0, 1)
             view.putpixel((x, y), color)
-        print '%3.1f%%' % (100 * x / res.width)
-    # view.show()
+        print '%4.1f%%' % (100 * x / res.width)
+    view.show()
     view.save(FILE)
     
 if __name__ == '__main__':
     t1 = time.time()
     main()
-    print 'baked image in %.2fs! saved as %s' % (time.time() - t1, FILE)
+    print 'baked image with %d*%d Antialiasing in %.2fs! saved as "%s"' % (AA, AA, time.time() - t1, FILE)
 

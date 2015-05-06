@@ -28,8 +28,8 @@ class Vec3(object):
         elif type(other) is Vec3:
             # component multiplication by default. use dot() or cross() for others
             return Vec3(self.x * other.x,
-                           self.y * other.y,
-                           self.z * other.z)
+                        self.y * other.y,
+                        self.z * other.z)
         else:
             raise Exception("invalid operand for Vec3 multiplication: " + repr(type(other)))
             
@@ -47,13 +47,14 @@ class Vec3(object):
     
     def cross(self, other):
         return Vec3(self.y * other.z - self.z * other.y,
-                       self.z * other.x - self.x * other.z,
-                       self.x * other.y - self.y * other.x)
+                    self.z * other.x - self.x * other.z,
+                    self.x * other.y - self.y * other.x)
     
     def reflect(self, n):
         return self - n * self.dot(n) * 2
     
     def refract(self, n, refract):
+        # TODO fixen! Brechung sieht irgendwie einfach wie Spiegelung aus. Falsche Rechnung hier?
         cosD = -n.dot(self)
         quad = refract*refract * (1 - cosD*cosD)
         if quad > 1: return None

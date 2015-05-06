@@ -51,7 +51,6 @@ class View(object):
     
     def putpixel(self, (x, y), color):
         c = int(255 * color.x) | (int(255 * color.y) << 8) | (int(255 * color.z) << 16)
-        #self.image[x, y] = c
         self.image.putpixel((x, self.res.height - 1 - y), c)
         
     def save(self, f):
