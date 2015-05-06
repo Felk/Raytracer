@@ -21,9 +21,9 @@ class World(object):
         maxdist = float('inf')
         intersect = None
         for o in self.objects:
-            if o == exclude: continue
+            #if o == exclude: continue
             param = o.intersectionParameter(ray)
-            if param and param < maxdist:
+            if param and param > 0.0001 and param < maxdist:
                 maxdist = param
                 intersect = Hit(o, ray.pointAt(param))
         return intersect

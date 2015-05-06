@@ -18,14 +18,13 @@ class Sphere(object):
         self.center = center
         self.radius = radius
         
-    def intersectionParameter(self, ray):
-        co = self.center - ray.origin
-        v = co.dot(ray.direction)
+    def intersectionParameter(self, straight):
+        co = self.center - straight.origin
+        v = co.dot(straight.direction)
         discr = v**2 - co.dot(co) + self.radius**2
         
         if discr >= 0:
-            param = v - sqrt(discr)
-            if param > 0: return param
+            return v - sqrt(discr)
         return None
 
     def normalAt(self, p):
@@ -38,15 +37,13 @@ class Plane(object):
         self.p = p
         self.n = n.normalized()
         
-    def intersectionParameter(self, ray):
-        op = ray.origin - self.p
+    def intersectionParameter(self, straight):
+        op = straight.origin - self.p
         a = op.dot(self.n)
-        b = ray.direction.dot(self.n)
+        b = straight.direction.dot(self.n)
         
         if b:
-            param = -a/b
-            if param > 0:
-                return param
+            return -a/b
         return None
         
     def normalAt(self, p):
@@ -64,9 +61,9 @@ class Triangle(object):
         self.v = self.c - self.a
         self.n = (self.v.cross(self.u)).normalized()
         
-    def intersectionParameter(self, ray):
-        w = ray.origin - self.a
-        dv = ray.direction.cross(self.v)
+    def intersectionParameter(self, straight):
+        w = straight.origin - self.a
+        dv = straight.direction.cross(self.v)
         dvu = dv.dot(self.u)
         
         if dvu == 0.0:
@@ -74,11 +71,10 @@ class Triangle(object):
         
         wu = w.cross(self.u)
         r = dv.dot(w) / dvu
-        s = wu.dot(ray.direction) / dvu
+        s = wu.dot(straight.direction) / dvu
         
-        if 0<=r and r<=1 and 0<=s and s<=1 and r+s<=1:
-            param = wu.dot(self.v) / dvu
-            if param > 0: return param;
+        if 0<=r<=1 and 0<=s<=1 and r+s<=1:
+            return wu.dot(self.v) / dvu;
         return None
         
     def normalAt(self, p):

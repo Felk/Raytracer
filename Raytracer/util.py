@@ -35,6 +35,9 @@ class Vec3(object):
             
     def __truediv__(self, other):
         return Vec3(self.x / other, self.y / other, self.z / other)
+    
+    def __div__(self, other):
+        return Vec3(self.x / other, self.y / other, self.z / other)
        
     def __neg__(self):
         return self * -1
@@ -49,6 +52,12 @@ class Vec3(object):
     
     def reflect(self, n):
         return self - n * self.dot(n) * 2
+    
+    def refract(self, n, refract):
+        cosD = -n.dot(self)
+        quad = refract*refract * (1 - cosD*cosD)
+        if quad > 1: return None
+        return self * refract + n * (refract * cosD - sqrt(1 - quad))
     
     def length(self):
         return sqrt(self.x * self.x + self.y * self.y + self.z * self.z)

@@ -3,6 +3,8 @@ Created on 04.05.2015
 
 @author: Felk
 '''
+from __future__ import division
+
 from collections import namedtuple
 from math import tan
 
@@ -36,10 +38,16 @@ class View(object):
         self.pixelWidth = self.width / (res.width - 1)
         self.pixelHeight = self.height / (res.height - 1)
         
-    def rayAt(self, posX, posY):
-        x = self.camera.s * (posX * self.pixelWidth - self.width / 2)
-        y = self.camera.u * (posY * self.pixelHeight - self.height / 2)
-        return Ray(self.camera.eye, self.camera.f + x + y)
+    def raysAt(self, posX, posY, aa=1):
+        rays = []
+        stepX = self.pixelWidth / aa
+        stepY = self.pixelHeight / aa
+        for ix in range(aa):
+            for iy in range(aa):
+                x = self.camera.s * (posX * self.pixelWidth + ix * stepX - self.width / 2)
+                y = self.camera.u * (posY * self.pixelHeight + iy * stepY - self.height / 2)
+                rays.append(Ray(self.camera.eye, self.camera.f + x + y))
+        return rays
     
     def putpixel(self, (x, y), color):
         c = int(255 * color.x) | (int(255 * color.y) << 8) | (int(255 * color.z) << 16)
