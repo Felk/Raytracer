@@ -5,9 +5,10 @@ Created on 05.05.2015
 '''
 
 class Hit(object):
-    def __init__(self, obj, pos):
+    def __init__(self, obj, positions):
         self.obj = obj
-        self.pos = pos
+        self.pos = positions[0]
+        self.posN = positions
 
 
 class World(object):
@@ -22,10 +23,10 @@ class World(object):
         intersect = None
         for o in self.objects:
             #if o == exclude: continue
-            param = o.intersectionParameter(ray)
-            if param and param > 0.0001 and param < maxdist:
-                maxdist = param
-                intersect = Hit(o, ray.pointAt(param))
+            params = o.intersectionParameter(ray)
+            if params and params[0] > 0.0001 and params[0] < maxdist:
+                maxdist = params[0]
+                intersect = Hit(o, [ray.pointAt(P) for P in params])
         return intersect
 
         

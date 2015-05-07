@@ -14,8 +14,9 @@ from objects import Sphere, Plane, Triangle, Light
 from util import Vec3, Ray
 from world import World
 import time
+from OpenGL.extensions import alternate
 
-AA = 2
+AA = 1
 FILE = 'out.png'
 
 BG_COLOR = Vec3(0.6, 0.6, 1)
@@ -82,8 +83,19 @@ def shade(hit, level):
     if this.mat.reflect > 0:
         rayReflected = vecToHit.reflect(n)
         color += trace(Ray(hit.pos, rayReflected), level + 1) * this.mat.reflect
-    if this.mat.transparency > 0:
-        rayRefracted = vecToHit.refract(n, this.mat.refract)
+    if this.mat.transparency > 0 and len(hit.posN) > 1:
+        alternate = False
+        rayRefracted = vecToHit
+        curPos = hit.pos
+        curN = n
+        # TODO WIP
+        for intersect in hit.posN:
+            if not rayReflected: break;
+            if alternate:
+                rayRefracted = rayRefracted.refract(this.normalAt(intersect), this.mat.refract)
+            else:
+                rayRefracted = rayRefracted.refract(this.normalAt(intersect), 1/this.mat.refract)
+            alternate = not alternate
         if rayRefracted:
             color += trace(Ray(hit.pos, rayRefracted), level + 1) * this.mat.transparency
     return color

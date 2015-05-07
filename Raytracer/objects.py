@@ -18,15 +18,16 @@ class Sphere(object):
         self.center = center
         self.radius = radius
         
-    def intersectionParameter(self, straight):
+    def intersectionParameter(self, straight):  
         co = self.center - straight.origin
         v = co.dot(straight.direction)
-        discr = v**2 - co.dot(co) + self.radius**2
+        discr = v*v - co.dot(co) + self.radius**2
         
         if discr >= 0:
-            return v - sqrt(discr)
-        return None
-
+            root = sqrt(discr)
+            return [v - root, v + root]
+        return None  
+    
     def normalAt(self, p):
         return (p - self.center).normalized()
     
@@ -43,7 +44,7 @@ class Plane(object):
         b = straight.direction.dot(self.n)
         
         if b:
-            return -a/b
+            return [-a/b]
         return None
         
     def normalAt(self, p):
@@ -74,7 +75,7 @@ class Triangle(object):
         s = wu.dot(straight.direction) / dvu
         
         if 0<=r<=1 and 0<=s<=1 and r+s<=1:
-            return wu.dot(self.v) / dvu;
+            return [wu.dot(self.v) / dvu];
         return None
         
     def normalAt(self, p):
